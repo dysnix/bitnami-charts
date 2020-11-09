@@ -109,6 +109,31 @@ cloneStaticSiteFromGit:
   ##
   interval: 60
 
+## Get the server static content from a docker image
+## NOTE: This will override staticSiteConfigmap and staticSitePVC
+##
+fetchStaticSiteFromDockerImage:
+  enabled: false
+  ## Custom Docker image must have to copy into the
+  ##
+  image:
+    registry: docker.io
+    repository: alpine
+    tag: "3.12"
+    ## Specify a imagePullPolicy
+    ## Defaults to 'Always' if image tag is 'latest', else set to 'IfNotPresent'
+    ## ref: http://kubernetes.io/docs/user-guide/images/#pre-pulling-images
+    ##
+    pullPolicy: IfNotPresent
+    ## Optionally specify an array of imagePullSecrets.
+    ## Secrets must be manually created in the namespace.
+    ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
+    ##
+    # pullSecrets:
+    #   - myRegistryKeySecretName
+  ## Directory with static site files
+  # directory: /app
+
 ## Custom server block to be added to NGINX configuration
 ## PHP-FPM example server block:
 ## serverBlock: |-

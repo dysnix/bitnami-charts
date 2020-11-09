@@ -51,6 +51,7 @@ spec:
       securityContext:
         fsGroup: {{ .Values.podSecurityContext.fsGroup }}
       {{- end }}
+      {{- if (include "nginx.useStaticSite" .) }}     
       {{- if .Values.cloneStaticSiteFromGit.enabled }}
       initContainers:
         - name: git-clone-repository
@@ -79,6 +80,21 @@ spec:
           volumeMounts:
             - name: staticsite
               mountPath: /app
+      {{- end }}
+      {{- if .Values.fetchStaticSiteFromDockerImage.enabled }}
+      initContainers:
+        - name: fetch-from-dockerimage
+          image: {{ include "nginx.fetchStaticSiteFromDockerImage.image" . }}
+          imagePullPolicy: {{ .Values.fetchStaticSiteFromDockerImage.image.pullPolicy | quote }}
+          command:
+            - /bin/sh
+            - -c
+            - cd {{ .Values.fetchStaticSiteFromDockerImage.directory }} && cp -r ./ /empty-app
+          volumeMounts:
+            - name: staticsite
+              mountPath: /empty-app
+      containers:
+      {{- end }}
       {{- else }}
       containers:
       {{- end }}
